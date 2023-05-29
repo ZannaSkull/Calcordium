@@ -2,166 +2,151 @@ import tkinter as tk
 from tkinter import ttk
 import math
 
-def button_click(value):
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current + str(value))
+class CalcordiumCalculator:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Caldordium")
+        self.window.geometry("400x400")
 
-def clear_button():
-    entry.delete(0, tk.END)
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('TButton', background='#222', foreground='white')
+        style.configure('TEntry', fieldbackground='#333', foreground='white')
+        style.configure('TLabel', background='#333', foreground='white')
 
-def equal_button():
-    try:
-        expression = entry.get()
-        if "/ 0" in expression:
-            entry.delete(0, tk.END)
-            entry.insert(tk.END, "Errore: Divisione per zero")
-        else:
-            result = eval(expression)
-            entry.delete(0, tk.END)
-            entry.insert(tk.END, result)
-    except Exception as e:
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, "Errore: " + str(e))
+        self.entry = ttk.Entry(self.window, width=20, font=("Arial", 14))
+        self.entry.grid(row=0, column=0, columnspan=5, padx=10, pady=10)
 
-def sin_button():
-    try:
-        value = float(entry.get())
-        result = math.sin(math.radians(value))
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, result)
-    except Exception as e:
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, "Errore: " + str(e))
+        buttons = [
+            ['7', '8', '9', '/', 'sqrt'],
+            ['4', '5', '6', '*', 'log'],
+            ['1', '2', '3', '-', 'ln'],
+            ['0', '.', '=', '+', 'C'],
+            ['[', ']', '{', '}', '^2'],
+            ['(', ')', '%', '!', 'mod']
+        ]
 
-def cos_button():
-    try:
-        value = float(entry.get())
-        result = math.cos(math.radians(value))
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, result)
-    except Exception as e:
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, "Errore: " + str(e))
-
-def tan_button():
-    try:
-        value = float(entry.get())
-        result = math.tan(math.radians(value))
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, result)
-    except Exception as e:
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, "Errore: " + str(e))
-
-def left_parenthesis():
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current + "(")
-
-def right_parenthesis():
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current + ")")
-
-def square_button():
-    try:
-        value = float(entry.get())
-        result = value ** 2
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, result)
-    except Exception as e:
-        entry.delete(0, tk.END)
-        entry.insert(tk.END, "Errore: " + str(e))
-
-def delete_button():
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current[:-1])
-
-def variable_button(var):
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current + var)
-
-def insert_operator(operator):
-    current = entry.get()
-    if current.endswith(("(", "+", "-", "*", "/")):
-        return
-    entry.delete(0, tk.END)
-    entry.insert(tk.END, current + operator)
-
-window = tk.Tk()
-window.title("Calcolatrice Scientifica")
-window.geometry("400x400")
-
-style = ttk.Style()
-style.theme_use('clam')
-style.configure('TButton', background='#222', foreground='white')
-style.configure('TEntry', fieldbackground='#333', foreground='white')
-style.configure('TLabel', background='#333', foreground='white')
-
-entry = ttk.Entry(window, width=20, font=("Arial", 14))
-entry.grid(row=0, column=0, columnspan=5, padx=10, pady=10)
-
-numbers = list(range(1, 10))
-row = 1
-col = 0
-for number in numbers:
-    button = ttk.Button(window, text=str(number), width=6,
-                        command=lambda num=number: button_click(num))
-    button.grid(row=row, column=col, padx=5, pady=5)
-    col += 1
-    if col > 2:
+        row = 1
         col = 0
-        row += 1
+        for button_row in buttons:
+            for button_text in button_row:
+                button = ttk.Button(self.window, text=button_text, width=6,
+                                    command=lambda text=button_text: self.button_click(text))
+                button.grid(row=row, column=col, padx=5, pady=5)
+                col += 1
+            row += 1
+            col = 0
 
-button_zero = ttk.Button(window, text="0", width=6,
-                         command=lambda: button_click(0))
-button_zero.grid(row=4, column=0, padx=5, pady=5)
+        self.window.mainloop()
 
-clear_button = ttk.Button(window, text="    🗑️", width=6,
-                          command=clear_button, compound=tk.CENTER)
-clear_button.grid(row=4, column=1, padx=5, pady=5)
+    def button_click(self, value):
+        if value == '=':
+            self.equal_button()
+        elif value == 'sqrt':
+            self.sqrt_button()
+        elif value == 'log':
+            self.log_button()
+        elif value == '^2':
+            self.square_button()
+        elif value == 'C':
+            self.clear_button()
+        elif value == 'ln':
+            self.ln_button()
+        elif value == 'mod':
+            self.modulo_button()
+        elif value == '!':
+            self.fattoriale_button()
+        else:
+            current = self.entry.get()
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, current + str(value))
 
-equal_button = ttk.Button(window, text="=", width=6,
-                          command=equal_button)
-equal_button.grid(row=4, column=2, padx=5, pady=5)
+    def equal_button(self):
+        try:
+            expression = self.entry.get()
+            if "/ 0" in expression:
+                self.entry.delete(0, tk.END)
+                self.entry.insert(tk.END, "Errore: Divisione per zero")
+            else:
+                result = eval(expression)
+                self.entry.delete(0, tk.END)
+                self.entry.insert(tk.END, result)
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
 
-operations = ["+", "-", "*", "/"]
-row = 1
-for operation in operations:
-    button = ttk.Button(window, text=operation, width=6,
-                        command=lambda op=operation: insert_operator(op))
-    button.grid(row=row, column=3, padx=5, pady=5)
-    row += 1
+    def sqrt_button(self):
+        try:
+            value = float(self.entry.get())
+            result = math.sqrt(value)
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, result)
 
-sin_button = ttk.Button(window, text="sin", width=6,
-                        command=sin_button)
-sin_button.grid(row=1, column=4, padx=5, pady=5)
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
 
-cos_button = ttk.Button(window, text="cos", width=6,
-                        command=cos_button)
-cos_button.grid(row=2, column=4, padx=5, pady=5)
+    def log_button(self):
+        try:
+            value = float(self.entry.get())
+            result = math.log10(value)
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, result)
 
-tan_button = ttk.Button(window, text="tan", width=6,
-                        command=tan_button)
-tan_button.grid(row=3, column=4, padx=5, pady=5)
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
 
-left_parenthesis_button = ttk.Button(window, text="(", width=6,
-                                     command=left_parenthesis)
-left_parenthesis_button.grid(row=4, column=3, padx=5, pady=5)
+    def square_button(self):
+        try:
+            value = float(self.entry.get())
+            result = value ** 2
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, result)
 
-right_parenthesis_button = ttk.Button(window, text=")", width=6,
-                                      command=right_parenthesis)
-right_parenthesis_button.grid(row=4, column=4, padx=5, pady=5)
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
 
-square_button = ttk.Button(window, text="x^2", width=6,
-                           command=square_button)
-square_button.grid(row=5, column=0, padx=5, pady=5)
+    def clear_button(self):
+        self.entry.delete(0, tk.END)
 
-delete_button = ttk.Button(window, text="Del", width=6,
-                           command=delete_button)
-delete_button.grid(row=5, column=1, padx=5, pady=5)
+    def ln_button(self):
+        try:
+            value = float(self.entry.get())
+            result = math.log(value)
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, result)
 
-window.mainloop()
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
+
+    def modulo_button(self):
+        try:
+            expression = self.entry.get()
+            if "/ 0" in expression:
+                self.entry.delete(0, tk.END)
+                self.entry.insert(tk.END, "Errore: Divisione per zero")
+            else:
+                result = eval(expression) % 1
+                self.entry.delete(0, tk.END)
+                self.entry.insert(tk.END, result)
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
+
+    def fattoriale_button(self):
+        try:
+            value = int(self.entry.get())
+            result = math.factorial(value)
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, result)
+
+        except Exception as e:
+            self.entry.delete(0, tk.END)
+            self.entry.insert(tk.END, "Errore: " + str(e))
+
+
+if __name__ == "__main__":
+    app = CalcordiumCalculator()
